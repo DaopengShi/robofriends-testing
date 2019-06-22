@@ -1,25 +1,34 @@
 version: 2.0
 jobs:
-  bobby:
+  build:
     docker:
       - image: circleci/node:latest
     steps:
-      - run:
-          name: Hello World
-          command: |
-            echo 'Hello World! bobby'
-  sally:
+      - checkout
+      - run: echo 'npm install'
+      - run: npm install
+      - run: CI=true npm run build
+  test:
     docker:
       - image: circleci/node:latest
     steps:
-      - run:
-          name: Hello World
-          command: |
-            echo 'Hello World! sally'
+      - checkout
+      - run: echo 'testing stuff'
+      - run: npm install
+      - run: npm test
+  hithere:
+    docker:
+      - image: circleci/node:latest
+    steps:    
+      - checkout
+      - run: echo "helllloo!"
 workflows:
   version: 2
-  bobby_sally:
+  build_test_and_lint:
     jobs:
-      - bobby
-      - sally
+      - build
+      - hithere
+      - test:
+          requires:
+            - hithere
 
